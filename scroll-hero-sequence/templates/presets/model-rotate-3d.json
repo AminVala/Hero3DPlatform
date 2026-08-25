@@ -1,0 +1,122 @@
+{
+  "slug": "model-rotate-3d",
+  "name": "3D Model Rotate & Feature (WildVikings/DJI)",
+  "version": "1.0.0",
+  "description": "WildVikings / DJI archetype: a rendered 3D model rotates and zooms across scroll while feature labels appear at keyframes. Uses a pre-rendered frame sequence; no real-time 3D. Content-animation parity with Scrollsequence.",
+  "master_frame_index": 1,
+  "total_frames_desktop": 36,
+  "total_frames_mobile": 24,
+  "total_frames_pro_max": 60,
+  "frame_model": "prerendered-sequence",
+  "prompt_start": "Rendered 3D product model on dark studio background, turntable rotation, consistent lighting across the full turn, high fidelity, room for feature labels",
+  "lock_zone": {
+    "start_frame": 34,
+    "end_frame": 36,
+    "source_attachment_id": 0
+  },
+  "scroll_config": {
+    "pin_duration": "400%",
+    "easing": "none",
+    "mobile_disable": false,
+    "reduced_motion": "poster"
+  },
+  "scenes": [
+    {
+      "index": 1,
+      "frame_start": 1,
+      "frame_end": 18,
+      "label": "Rotate — Front to Side",
+      "generation_mode": "manual",
+      "fixed_content": "<div class=\"ss-stage\"><h1 id=\"model-title\">Engineered in 3D</h1><p id=\"label-a\" class=\"ss-label\">Aerodynamic shell</p><p id=\"label-b\" class=\"ss-label\">Precision sensors</p></div>",
+      "image_sequence": [],
+      "content_animations": [
+        {
+          "selector": "#model-title",
+          "start": 0,
+          "end": 6,
+          "from": [ { "type": "fade", "value": 0, "duration": 3 } ],
+          "to": [ { "type": "fade", "value": 0, "duration": 3 }, { "type": "move_vertical", "value": -40, "duration": 3 } ]
+        },
+        {
+          "selector": "#label-a",
+          "start": 6,
+          "end": 12,
+          "from": [ { "type": "fade", "value": 0, "duration": 2 }, { "type": "move_horizontal", "value": -30, "duration": 3 } ],
+          "to": [ { "type": "fade", "value": 0, "duration": 2 } ]
+        },
+        {
+          "selector": "#label-b",
+          "start": 12,
+          "end": 18,
+          "from": [ { "type": "fade", "value": 0, "duration": 2 }, { "type": "move_horizontal", "value": 30, "duration": 3 } ],
+          "to": [ { "type": "fade", "value": 0, "duration": 2 } ]
+        }
+      ],
+      "settings": {
+        "position": "sticky",
+        "start_trigger": "default",
+        "end_trigger": "default",
+        "scroll_delay": 0.75,
+        "image_width": "full",
+        "image_opacity": 1,
+        "custom_css": "",
+        "portrait": { "scale": "fit", "h_align": 50, "v_align": 50 },
+        "landscape": { "scale": "fill", "h_align": 50, "v_align": 50 }
+      },
+      "beats": []
+    },
+    {
+      "index": 2,
+      "frame_start": 19,
+      "frame_end": 36,
+      "label": "Rotate — Side to Back + CTA",
+      "generation_mode": "manual",
+      "fixed_content": "<div class=\"ss-stage\"><p id=\"label-c\" class=\"ss-label\">Modular battery</p><a id=\"model-cta\" class=\"ss-cta\" href=\"#preorder\">Pre-order</a></div>",
+      "image_sequence": [],
+      "content_animations": [
+        {
+          "selector": "#label-c",
+          "start": 19,
+          "end": 28,
+          "from": [ { "type": "fade", "value": 0, "duration": 2 }, { "type": "move_horizontal", "value": -30, "duration": 3 } ],
+          "to": [ { "type": "fade", "value": 0, "duration": 2 } ]
+        },
+        {
+          "selector": "#model-cta",
+          "start": 30,
+          "end": 36,
+          "from": [ { "type": "fade", "value": 0, "duration": 2 }, { "type": "scale", "value": 0.6, "duration": 3 } ],
+          "to": []
+        }
+      ],
+      "settings": {
+        "position": "sticky",
+        "start_trigger": "default",
+        "end_trigger": "later",
+        "scroll_delay": 0.75,
+        "image_width": "full",
+        "image_opacity": 1,
+        "custom_css": "",
+        "portrait": { "scale": "fit", "h_align": 50, "v_align": 50 },
+        "landscape": { "scale": "fill", "h_align": 50, "v_align": 50 }
+      },
+      "beats": []
+    }
+  ],
+  "overlay_steps": [],
+  "red_lines": [
+    "frame_is_visual",
+    "html_overlays_only",
+    "scroll_driven_not_time",
+    "no_scroll_hijack",
+    "prerendered_not_realtime_3d",
+    "webp_avif_only"
+  ],
+  "tech_specs": {
+    "resolution_desktop": "1920x1080",
+    "resolution_mobile": "1080x1080",
+    "camera": "turntable, consistent lighting",
+    "lighting": "dark studio, rim light",
+    "composition": "model centered, labels flanking"
+  }
+}
