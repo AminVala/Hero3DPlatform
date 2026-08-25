@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "scroll-hero-sequence/hero-sequence",
+  "version": "0.1.0",
+  "title": "Scroll Hero Sequence",
+  "category": "media",
+  "icon": "images-alt2",
+  "description": "Cinematic scroll-driven hero with HTML overlays.",
+  "keywords": [ "hero", "scroll", "animation", "sequence" ],
+  "textdomain": "scroll-hero-sequence",
+  "attributes": {
+    "heroId": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": [ "wide", "full" ]
+  },
+  "editorScript": "file:./edit.js",
+  "render": "file:./render.php"
+}
