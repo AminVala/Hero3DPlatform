@@ -1,0 +1,105 @@
+{
+  "slug": "product-showcase",
+  "name": "Product Showcase (Assemble on Scroll)",
+  "version": "1.0.0",
+  "description": "QuarkBaby / SeaDronePro archetype: a product assembles or rotates as the user scrolls, with feature callouts fading in beside it. Content-animation parity with Scrollsequence.",
+  "master_frame_index": 12,
+  "total_frames_desktop": 24,
+  "total_frames_mobile": 24,
+  "total_frames_pro_max": 36,
+  "frame_model": "keyframe-interpolation",
+  "prompt_start": "Studio product shot on seamless neutral background, single hero object centered, soft three-point lighting, high detail, 50mm, generous negative space for feature callouts",
+  "lock_zone": {
+    "start_frame": 22,
+    "end_frame": 24,
+    "source_attachment_id": 0
+  },
+  "scroll_config": {
+    "pin_duration": "320%",
+    "easing": "none",
+    "mobile_disable": false,
+    "reduced_motion": "poster"
+  },
+  "scenes": [
+    {
+      "index": 1,
+      "frame_start": 1,
+      "frame_end": 24,
+      "label": "Assemble & Reveal",
+      "generation_mode": "manual",
+      "fixed_content": "<div class=\"ss-stage\"><h1 id=\"prod-title\">Meet the Product</h1><p id=\"prod-sub\">Engineered to impress</p><p id=\"feat-1\" class=\"ss-callout\">Precision core</p><p id=\"feat-2\" class=\"ss-callout\">All-day battery</p><p id=\"feat-3\" class=\"ss-callout\">Built to last</p><a id=\"prod-cta\" class=\"ss-cta\" href=\"#buy\">Buy now</a></div>",
+      "image_sequence": [],
+      "content_animations": [
+        {
+          "selector": "#prod-title",
+          "start": 0,
+          "end": 8,
+          "from": [ { "type": "fade", "value": 0, "duration": 3 }, { "type": "move_vertical", "value": -40, "duration": 4 } ],
+          "to": [ { "type": "fade", "value": 0, "duration": 3 } ]
+        },
+        {
+          "selector": "#prod-sub",
+          "start": 1,
+          "end": 8,
+          "from": [ { "type": "fade", "value": 0, "duration": 4 } ],
+          "to": [ { "type": "fade", "value": 0, "duration": 3 } ]
+        },
+        {
+          "selector": "#feat-1",
+          "start": 9,
+          "end": 14,
+          "from": [ { "type": "fade", "value": 0, "duration": 2 }, { "type": "move_horizontal", "value": 30, "duration": 3 } ],
+          "to": [ { "type": "fade", "value": 0, "duration": 2 } ]
+        },
+        {
+          "selector": "#feat-2",
+          "start": 13,
+          "end": 18,
+          "from": [ { "type": "fade", "value": 0, "duration": 2 }, { "type": "move_horizontal", "value": 30, "duration": 3 } ],
+          "to": [ { "type": "fade", "value": 0, "duration": 2 } ]
+        },
+        {
+          "selector": "#feat-3",
+          "start": 17,
+          "end": 22,
+          "from": [ { "type": "fade", "value": 0, "duration": 2 }, { "type": "move_horizontal", "value": 30, "duration": 3 } ],
+          "to": [ { "type": "fade", "value": 0, "duration": 2 } ]
+        },
+        {
+          "selector": "#prod-cta",
+          "start": 21,
+          "end": 24,
+          "from": [ { "type": "fade", "value": 0, "duration": 2 }, { "type": "scale", "value": 0.6, "duration": 2 } ],
+          "to": []
+        }
+      ],
+      "settings": {
+        "position": "sticky",
+        "start_trigger": "default",
+        "end_trigger": "default",
+        "scroll_delay": 0.75,
+        "image_width": "full",
+        "image_opacity": 1,
+        "custom_css": "",
+        "portrait": { "scale": "fit", "h_align": 50, "v_align": 50 },
+        "landscape": { "scale": "fill", "h_align": 50, "v_align": 50 }
+      },
+      "beats": []
+    }
+  ],
+  "overlay_steps": [],
+  "red_lines": [
+    "frame_is_visual",
+    "html_overlays_only",
+    "scroll_driven_not_time",
+    "no_scroll_hijack",
+    "webp_avif_only"
+  ],
+  "tech_specs": {
+    "resolution_desktop": "1600x1600",
+    "resolution_mobile": "1080x1080",
+    "camera": "50mm centered, product-locked",
+    "lighting": "soft three-point",
+    "composition": "near-square, product centered"
+  }
+}
