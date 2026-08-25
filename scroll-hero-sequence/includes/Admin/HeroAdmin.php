@@ -84,6 +84,10 @@ final class HeroAdmin {
 					'selectMaster'    => __( 'Select Master Frame', 'scroll-hero-sequence' ),
 					'preview'         => __( 'Preview', 'scroll-hero-sequence' ),
 					'confirmTemplate' => __( 'Applying a template will replace the current storyboard and overlays. Continue?', 'scroll-hero-sequence' ),
+					'selectFrames'    => __( 'Select Frame Sequence', 'scroll-hero-sequence' ),
+					'addFrames'       => __( 'Add Frames', 'scroll-hero-sequence' ),
+					'confirmClear'    => __( 'Remove all frames from this set?', 'scroll-hero-sequence' ),
+					'frameCap'        => __( 'Frame limit reached for your plan. Extra frames were not added.', 'scroll-hero-sequence' ),
 				],
 			]
 		);
@@ -115,6 +119,53 @@ final class HeroAdmin {
 		if ( isset( $_POST['shs_template_slug'] ) ) {
 			update_post_meta( $post_id, '_shs_template_slug', sanitize_key( wp_unslash( $_POST['shs_template_slug'] ) ) );
 		}
+
+		// Persist the ordered frame sets (CSV of attachment IDs from the strips).
+		$limiter     = new PlanLimiter();
+		$max_desktop = $limiter->is_pro()
+			? HeroSequence::MAX_FRAMES_DESKTOP_PRO
+			: HeroSequence::MAX_FRAMES_DESKTOP_FREE;
+
+		if ( isset( $_POST['shs_frames_desktop'] ) ) {
+			$desktop = $this->parse_frame_ids( wp_unslash( (string) $_POST['shs_frames_desktop'] ), $max_desktop );
+			update_post_meta( $post_id, HeroSequence::META_FRAMES_DESKTOP, $desktop );
+		}
+
+		if ( isset( $_POST['shs_frames_mobile'] ) ) {
+			$mobile = $this->parse_frame_ids( wp_unslash( (string) $_POST['shs_frames_mobile'] ), HeroSequence::MAX_FRAMES_MOBILE );
+			update_post_meta( $post_id, HeroSequence::META_FRAMES_MOBILE, $mobile );
+		}
+	}
+
+	/**
+	 * Turn the hidden-field CSV of attachment IDs into a clean, ordered,
+	 * de-duplicated, capped, image-only list.
+	 *
+	 * @return int[]
+	 */
+	private function parse_frame_ids( string $csv, int $max ): array {
+		$csv = trim( $csv );
+		if ( '' === $csv ) {
+			return [];
+		}
+
+		$ids   = array_map( 'absint', explode( ',', $csv ) );
+		$clean = [];
+		foreach ( $ids as $id ) {
+			if ( $id <= 0 || in_array( $id, $clean, true ) ) {
+				continue;
+			}
+			// Only accept real image attachments — never trust the client list.
+			if ( 'attachment' !== get_post_type( $id ) || ! wp_attachment_is_image( $id ) ) {
+				continue;
+			}
+			$clean[] = $id;
+			if ( count( $clean ) >= $max ) {
+				break;
+			}
+		}
+
+		return $clean;
 	}
 
 	/**
