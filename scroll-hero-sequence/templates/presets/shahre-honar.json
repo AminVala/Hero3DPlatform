@@ -1,0 +1,165 @@
+{
+  "slug": "shahre-honar",
+  "name": "Shahre Honar Homepage Hero",
+  "version": "1.0.0",
+  "description": "Reference-preserving scroll hero: blank canvas evolves into a full art studio. HTML overlays hand off from frame 70.",
+  "master_frame_index": 14,
+  "total_frames_desktop": 24,
+  "total_frames_mobile": 16,
+  "total_frames_pro_max": 36,
+  "frame_model": "keyframe-interpolation",
+  "prompt_start": "Blank warm watercolor canvas, soft window light from the left, empty wooden desk, no objects, cinematic 50mm eye-level, 4900K, right 40% clean negative space for UI",
+  "lock_zone": {
+    "start_frame": 14,
+    "end_frame": 24,
+    "source_attachment_id": 0
+  },
+  "scroll_config": {
+    "pin_duration": "300%",
+    "easing": "none",
+    "mobile_disable": false,
+    "reduced_motion": "poster"
+  },
+  "scenes": [
+    {
+      "index": 1,
+      "frame_start": 1,
+      "frame_end": 6,
+      "label": "Blank → Drawing",
+      "generation_mode": "ai",
+      "beats": [
+        { "index": 1, "frame": 1, "description": "Blank canvas — minimal watercolor wash", "is_keyframe": true },
+        { "index": 2, "frame": 3, "description": "First pencil lines appear", "is_keyframe": true },
+        { "index": 3, "frame": 6, "description": "Drawing stage — sketchbook, pencils, charcoal", "is_keyframe": true }
+      ]
+    },
+    {
+      "index": 2,
+      "frame_start": 7,
+      "frame_end": 12,
+      "label": "Art + Engineering",
+      "generation_mode": "ai",
+      "beats": [
+        { "index": 4, "frame": 7, "description": "Watercolor palette added", "is_keyframe": true },
+        { "index": 5, "frame": 9, "description": "Oil paints and brushes appear", "is_keyframe": true },
+        { "index": 6, "frame": 12, "description": "Engineering tools — compass, ruler", "is_keyframe": true }
+      ]
+    },
+    {
+      "index": 3,
+      "frame_start": 13,
+      "frame_end": 18,
+      "label": "Full Studio",
+      "generation_mode": "ai",
+      "beats": [
+        { "index": 7, "frame": 13, "description": "Easel rises into frame", "is_keyframe": true },
+        { "index": 8, "frame": 14, "description": "Master studio — full composition, no UI", "is_keyframe": true },
+        { "index": 9, "frame": 18, "description": "Atmosphere — dust particles, warm rim light", "is_keyframe": false }
+      ]
+    },
+    {
+      "index": 4,
+      "frame_start": 19,
+      "frame_end": 24,
+      "label": "Brand Handoff",
+      "generation_mode": "locked",
+      "beats": [
+        { "index": 10, "frame": 19, "description": "HTML overlay — eyebrow text", "is_keyframe": true },
+        { "index": 11, "frame": 21, "description": "HTML overlay — CTA buttons", "is_keyframe": true },
+        { "index": 12, "frame": 24, "description": "Golden final hero — poster frame", "is_keyframe": true }
+      ]
+    }
+  ],
+  "overlay_steps": [
+    {
+      "frame_trigger": 14,
+      "element_type": "logo",
+      "content": { "alt": "Shahre Honar" },
+      "animation": "fade",
+      "position": { "x": "92%", "y": "6%", "anchor": "top-right" },
+      "style_token": "md3-surface-container"
+    },
+    {
+      "frame_trigger": 15,
+      "element_type": "nav",
+      "content": {
+        "items": [
+          { "label": "محصولات", "url": "#products" },
+          { "label": "دوره‌ها", "url": "#courses" },
+          { "label": "درباره", "url": "#about" }
+        ]
+      },
+      "animation": "slide_up",
+      "position": { "x": "50%", "y": "8%", "anchor": "top-center" },
+      "style_token": "md3-navigation-bar"
+    },
+    {
+      "frame_trigger": 19,
+      "element_type": "eyebrow",
+      "content": { "text": "شهر هنر" },
+      "animation": "fade",
+      "position": { "x": "72%", "y": "38%", "anchor": "center" },
+      "style_token": "md3-label-large"
+    },
+    {
+      "frame_trigger": 20,
+      "element_type": "h1",
+      "content": { "text": "دنیای هنر را حرفه‌ای خلق کن" },
+      "animation": "slide_up",
+      "position": { "x": "72%", "y": "48%", "anchor": "center" },
+      "style_token": "md3-display-small"
+    },
+    {
+      "frame_trigger": 21,
+      "element_type": "subtitle",
+      "content": { "text": "ابزار، مواد و آموزش حرفه‌ای برای هنرمندان و طراحان" },
+      "animation": "fade",
+      "position": { "x": "72%", "y": "58%", "anchor": "center" },
+      "style_token": "md3-body-large"
+    },
+    {
+      "frame_trigger": 22,
+      "element_type": "cta",
+      "content": {
+        "buttons": [
+          { "label": "مشاهده محصولات", "url": "#products", "variant": "filled" },
+          { "label": "شروع یادگیری", "url": "#courses", "variant": "outlined" }
+        ]
+      },
+      "animation": "scale",
+      "position": { "x": "72%", "y": "68%", "anchor": "center" },
+      "style_token": "md3-button-group"
+    },
+    {
+      "frame_trigger": 23,
+      "element_type": "trust",
+      "content": {
+        "items": [
+          { "icon": "support", "label": "پشتیبانی" },
+          { "icon": "secure", "label": "پرداخت امن" },
+          { "icon": "shipping", "label": "ارسال سریع" }
+        ]
+      },
+      "animation": "fade",
+      "position": { "x": "72%", "y": "78%", "anchor": "center" },
+      "style_token": "md3-trust-row"
+    }
+  ],
+  "red_lines": [
+    "no_baked_text",
+    "html_overlays_only",
+    "lock_zone_static",
+    "composition_match_frame_070_120",
+    "no_jump_cuts",
+    "webp_avif_only",
+    "scroll_driven_not_time"
+  ],
+  "tech_specs": {
+    "resolution_desktop": "1920x1080",
+    "resolution_mobile": "960x540",
+    "estimated_size_mb": "3.6-5.4",
+    "camera": "50mm eye-level, 5° down, midground focus",
+    "lighting": "soft window left, fill right, 4900K",
+    "composition": "golden ratio, right 40% negative space for UI"
+  }
+}
