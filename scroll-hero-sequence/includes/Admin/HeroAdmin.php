@@ -169,6 +169,99 @@ final class HeroAdmin {
 	}
 
 	/**
+	 * Sanitize a scene's content-animation list (Scrollsequence-parity).
+	 *
+	 * Only #id / .class selectors survive; animation types are whitelisted and
+	 * numeric values/durations are bounded. Untrusted client data never reaches
+	 * the runtime without validation.
+	 *
+	 * @param array<int, mixed> $animations
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function sanitize_content_animations( array $animations ): array {
+		$allowed_types = [ 'fade', 'move_vertical', 'move_horizontal', 'scale' ];
+
+		$clean_tween = static function ( $tween ) use ( $allowed_types ): array {
+			$type = (string) ( $tween['type'] ?? 'fade' );
+			if ( ! in_array( $type, $allowed_types, true ) ) {
+				$type = 'fade';
+			}
+			return [
+				'type'     => $type,
+				'value'    => (float) ( $tween['value'] ?? 0 ),
+				'duration' => max( 0, absint( $tween['duration'] ?? 0 ) ),
+			];
+		};
+
+		$clean = [];
+		foreach ( $animations as $anim ) {
+			$selector = (string) ( $anim['selector'] ?? '' );
+			// Drop anything that is not a single #id or .class token.
+			if ( ! preg_match( '/^[#.][A-Za-z0-9_-]+$/', $selector ) ) {
+				continue;
+			}
+			$clean[] = [
+				'selector' => $selector,
+				'start'    => max( 0, absint( $anim['start'] ?? 0 ) ),
+				'end'      => max( 0, absint( $anim['end'] ?? 0 ) ),
+				'from'     => array_map( $clean_tween, (array) ( $anim['from'] ?? [] ) ),
+				'to'       => array_map( $clean_tween, (array) ( $anim['to'] ?? [] ) ),
+			];
+		}
+
+		return $clean;
+	}
+
+	/**
+	 * Sanitize a scene's runtime settings (Scrollsequence-parity).
+	 *
+	 * @param array<string, mixed> $settings
+	 * @return array<string, mixed>
+	 */
+	private function sanitize_scene_settings( array $settings ): array {
+		$enum = static function ( $val, array $allowed, string $default ): string {
+			$val = (string) $val;
+			return in_array( $val, $allowed, true ) ? $val : $default;
+		};
+
+		$align = static function ( $raw ): array {
+			$raw   = (array) $raw;
+			$scale = in_array( ( $raw['scale'] ?? 'fill' ), [ 'fit', 'fill' ], true ) ? $raw['scale'] : 'fill';
+			return [
+				'scale'   => $scale,
+				'h_align' => min( 100, max( 0, absint( $raw['h_align'] ?? 50 ) ) ),
+				'v_align' => min( 100, max( 0, absint( $raw['v_align'] ?? 50 ) ) ),
+			];
+		};
+
+		return [
+			'position'      => $enum( $settings['position'] ?? '', [ 'sticky', 'absolute', 'static' ], 'sticky' ),
+			'start_trigger' => $enum( $settings['start_trigger'] ?? '', [ 'sooner', 'default' ], 'default' ),
+			'end_trigger'   => $enum( $settings['end_trigger'] ?? '', [ 'default', 'later' ], 'default' ),
+			'scroll_delay'  => min( 3.5, max( 0.0, (float) ( $settings['scroll_delay'] ?? 0.75 ) ) ),
+			'image_width'   => $enum( $settings['image_width'] ?? '', [ 'content', 'full' ], 'content' ),
+			'image_opacity' => min( 1.0, max( 0.0, (float) ( $settings['image_opacity'] ?? 1.0 ) ) ),
+			'custom_css'    => $this->sanitize_scoped_css( (string) ( $settings['custom_css'] ?? '' ) ),
+			'portrait'      => $align( $settings['portrait'] ?? [] ),
+			'landscape'     => $align( $settings['landscape'] ?? [] ),
+		];
+	}
+
+	/**
+	 * Strip dangerous constructs from user CSS before it is stored/echoed.
+	 * Removes tags, @import, expression(), javascript: and behaviour hooks.
+	 */
+	private function sanitize_scoped_css( string $css ): string {
+		$css = wp_strip_all_tags( $css );
+		$css = preg_replace( '/@import[^;]+;?/i', '', $css ) ?? '';
+		$css = preg_replace( '/expression\s*\(/i', '', $css ) ?? '';
+		$css = preg_replace( '/javascript\s*:/i', '', $css ) ?? '';
+		$css = preg_replace( '/behaviou?r\s*:/i', '', $css ) ?? '';
+		$css = str_replace( [ '<', '>' ], '', $css );
+		return trim( $css );
+	}
+
+	/**
 	 * Deep-sanitize the decoded hero config before persisting.
 	 *
 	 * Untrusted values reach this from the editor JSON payload. Overlay text,
@@ -204,16 +297,23 @@ final class HeroAdmin {
 		$clean['prompt_start']         = sanitize_textarea_field( (string) ( $data['prompt_start'] ?? '' ) );
 		$clean['generation_status']    = sanitize_key( (string) ( $data['generation_status'] ?? 'idle' ) );
 
-		// Scenes (structural only — no user free-text rendered as HTML).
+		// Scenes (structural + Scrollsequence-parity content/animation/settings).
 		$clean['scenes'] = [];
 		foreach ( (array) ( $data['scenes'] ?? [] ) as $scene ) {
 			$clean['scenes'][] = [
-				'index'           => absint( $scene['index'] ?? 0 ),
-				'frame_start'     => absint( $scene['frame_start'] ?? 0 ),
-				'frame_end'       => absint( $scene['frame_end'] ?? 0 ),
-				'label'           => sanitize_text_field( (string) ( $scene['label'] ?? '' ) ),
-				'generation_mode' => in_array( ( $scene['generation_mode'] ?? 'ai' ), [ 'ai', 'manual', 'locked' ], true ) ? $scene['generation_mode'] : 'ai',
-				'beats'           => array_map(
+				'index'              => absint( $scene['index'] ?? 0 ),
+				'frame_start'        => absint( $scene['frame_start'] ?? 0 ),
+				'frame_end'          => absint( $scene['frame_end'] ?? 0 ),
+				'label'              => sanitize_text_field( (string) ( $scene['label'] ?? '' ) ),
+				'generation_mode'    => in_array( ( $scene['generation_mode'] ?? 'ai' ), [ 'ai', 'manual', 'locked' ], true ) ? $scene['generation_mode'] : 'ai',
+				'fixed_content'      => wp_kses_post( (string) ( $scene['fixed_content'] ?? '' ) ),
+				'image_sequence'     => $this->parse_frame_ids(
+					implode( ',', array_map( 'absint', (array) ( $scene['image_sequence'] ?? [] ) ) ),
+					500
+				),
+				'content_animations' => $this->sanitize_content_animations( (array) ( $scene['content_animations'] ?? [] ) ),
+				'settings'           => $this->sanitize_scene_settings( (array) ( $scene['settings'] ?? [] ) ),
+				'beats'              => array_map(
 					static fn ( $b ) => [
 						'index'       => absint( $b['index'] ?? 0 ),
 						'frame'       => absint( $b['frame'] ?? 0 ),
