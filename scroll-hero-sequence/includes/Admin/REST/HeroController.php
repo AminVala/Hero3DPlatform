@@ -122,19 +122,41 @@ final class HeroController {
 		}
 
 		$master_url = $master_id ? wp_get_attachment_image_url( $master_id, 'full' ) : '';
+		$has_frames = ! empty( $frame_urls );
 
-		if ( $master_url && empty( $frame_urls ) ) {
+		// With no uploaded frames, synthesize a static sequence from the master
+		// so a published hero still renders (poster everywhere up to the master
+		// frame index).
+		if ( $master_url && ! $has_frames ) {
 			for ( $f = 1; $f <= $config->master_frame_index; $f++ ) {
 				$frame_urls[ $f ] = $master_url;
 			}
 		}
 
-		$lock = $config->lock_zone;
-		if ( $master_url ) {
+		// Lock zone: only FILL gaps. Never clobber a real uploaded frame — the
+		// uploaded set is the source of truth once it exists.
+		$lock        = $config->lock_zone;
+		$lock_source = $master_url;
+		if ( $has_frames && isset( $frame_urls[ $lock->start_frame ] ) ) {
+			$lock_source = $frame_urls[ $lock->start_frame ];
+		}
+		if ( $lock_source ) {
 			for ( $f = $lock->start_frame; $f <= $lock->end_frame; $f++ ) {
-				$frame_urls[ $f ] = $master_url;
+				if ( ! isset( $frame_urls[ $f ] ) ) {
+					$frame_urls[ $f ] = $lock_source;
+				}
 			}
 		}
+
+		// Poster = first real frame when available, else the master image.
+		$poster_url = $has_frames && isset( $frame_urls[1] ) ? $frame_urls[1] : $master_url;
+
+		// Total frames must cover every supplied frame key so none are unreachable
+		// when the engine maps scroll progress -> frame number.
+		$max_desktop_key = $frame_urls ? max( array_keys( $frame_urls ) ) : 0;
+		$total_desktop   = max( (int) $config->total_frames_desktop, $max_desktop_key );
+		$max_mobile_key  = $frame_urls_mobile ? max( array_keys( $frame_urls_mobile ) ) : 0;
+		$total_mobile    = max( (int) $config->total_frames_mobile, $max_mobile_key );
 
 		return [
 			'id'                  => $post->ID,
@@ -142,11 +164,11 @@ final class HeroController {
 			'template'            => get_post_meta( $post->ID, '_shs_template_slug', true ) ?: $config->template_slug,
 			'config'              => $config->to_array(),
 			'master_url'          => $master_url,
-			'poster_url'          => $master_url,
+			'poster_url'          => $poster_url,
 			'frame_urls'          => $frame_urls,
 			'frame_urls_mobile'   => $frame_urls_mobile,
-			'total_frames'        => $config->total_frames_desktop,
-			'total_frames_mobile' => $config->total_frames_mobile,
+			'total_frames'        => $total_desktop,
+			'total_frames_mobile' => $total_mobile,
 			'lock_zone'           => $lock->to_array(),
 		];
 	}
