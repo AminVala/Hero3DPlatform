@@ -1,0 +1,91 @@
+{
+  "slug": "hero-zoomout",
+  "name": "Hero Zoom-Out to Logo",
+  "version": "1.0.0",
+  "description": "Roxanalytics archetype: an immersive hero zooms out on scroll while elements slide into place and fade toward the brand logo. Content-animation parity with Scrollsequence.",
+  "master_frame_index": 1,
+  "total_frames_desktop": 24,
+  "total_frames_mobile": 20,
+  "total_frames_pro_max": 36,
+  "frame_model": "keyframe-interpolation",
+  "prompt_start": "Extreme close-up detail of a textured surface, cinematic, that will pull back to reveal a wide brand scene, centered composition, room to zoom out",
+  "lock_zone": {
+    "start_frame": 23,
+    "end_frame": 24,
+    "source_attachment_id": 0
+  },
+  "scroll_config": {
+    "pin_duration": "300%",
+    "easing": "none",
+    "mobile_disable": false,
+    "reduced_motion": "poster"
+  },
+  "scenes": [
+    {
+      "index": 1,
+      "frame_start": 1,
+      "frame_end": 24,
+      "label": "Zoom Out to Brand",
+      "generation_mode": "manual",
+      "fixed_content": "<div class=\"ss-stage\"><span id=\"eyebrow\" class=\"ss-eyebrow\">Introducing</span><h1 id=\"headline\">See the bigger picture</h1><p id=\"lede\">Data that scales with your ambition</p><div id=\"brand-logo\" class=\"ss-logo\" role=\"img\" aria-label=\"Brand\"></div></div>",
+      "image_sequence": [],
+      "content_animations": [
+        {
+          "selector": "#eyebrow",
+          "start": 0,
+          "end": 7,
+          "from": [ { "type": "fade", "value": 0, "duration": 2 } ],
+          "to": [ { "type": "fade", "value": 0, "duration": 3 }, { "type": "move_vertical", "value": -30, "duration": 3 } ]
+        },
+        {
+          "selector": "#headline",
+          "start": 0,
+          "end": 12,
+          "from": [ { "type": "fade", "value": 0, "duration": 3 }, { "type": "scale", "value": 1.4, "duration": 5 } ],
+          "to": [ { "type": "fade", "value": 0, "duration": 4 }, { "type": "scale", "value": 0.7, "duration": 4 } ]
+        },
+        {
+          "selector": "#lede",
+          "start": 4,
+          "end": 14,
+          "from": [ { "type": "fade", "value": 0, "duration": 3 }, { "type": "move_vertical", "value": 40, "duration": 4 } ],
+          "to": [ { "type": "fade", "value": 0, "duration": 4 } ]
+        },
+        {
+          "selector": "#brand-logo",
+          "start": 16,
+          "end": 24,
+          "from": [ { "type": "fade", "value": 0, "duration": 4 }, { "type": "scale", "value": 0.5, "duration": 5 } ],
+          "to": []
+        }
+      ],
+      "settings": {
+        "position": "sticky",
+        "start_trigger": "sooner",
+        "end_trigger": "default",
+        "scroll_delay": 1.0,
+        "image_width": "full",
+        "image_opacity": 1,
+        "custom_css": "",
+        "portrait": { "scale": "fill", "h_align": 50, "v_align": 50 },
+        "landscape": { "scale": "fill", "h_align": 50, "v_align": 50 }
+      },
+      "beats": []
+    }
+  ],
+  "overlay_steps": [],
+  "red_lines": [
+    "frame_is_visual",
+    "html_overlays_only",
+    "scroll_driven_not_time",
+    "no_scroll_hijack",
+    "webp_avif_only"
+  ],
+  "tech_specs": {
+    "resolution_desktop": "1920x1080",
+    "resolution_mobile": "1080x1350",
+    "camera": "dolly-out simulation via frame scale",
+    "lighting": "cinematic, brand-forward",
+    "composition": "center-weighted, pull-back"
+  }
+}
