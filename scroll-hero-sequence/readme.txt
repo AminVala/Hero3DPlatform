@@ -4,7 +4,7 @@ Tags: hero, scroll, animation, image sequence, scrollytelling
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.2.0
+Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,13 @@ Planned for Pro (Sprint 4) with Bring Your Own API Key.
 Add a JSON file to `templates/presets/` following the `shahre-honar.json` schema.
 
 == Changelog ==
+
+= 0.3.0 =
+* Scrollsequence-parity content model: per-scene fixed HTML content, ordered image sequence, frame-based content animations (selector + start/end + from/to tweens) and per-scene settings (position, triggers, scroll delay, image width/opacity, custom CSS, portrait/landscape scale & alignment).
+* New Domain value objects: AnimationTween, ContentAnimation, SceneSettings; Scene extended (backward compatible).
+* Frontend engine now applies content animations (fade / move vertical / move horizontal / scale) by frame number, with no-JS and reduced-motion fallbacks.
+* Three new template presets modeled on real Scrollsequence sites: Product Showcase, Hero Zoom-Out, 3D Model Rotate.
+* Hardened server-side sanitization for animations (whitelisted types, #id/.class selectors only) and scoped custom CSS.
 
 = 0.2.0 =
 * Frame supply pipeline (issue #2): admin UI to upload, reorder (drag-and-drop), remove and clear ordered desktop/mobile frame sequences via the media library.
