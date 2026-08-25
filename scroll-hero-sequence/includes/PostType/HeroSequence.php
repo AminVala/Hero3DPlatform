@@ -16,6 +16,15 @@ final class HeroSequence {
 
 	public const POST_TYPE = 'hero_sequence';
 
+	/** Frame-set meta keys. */
+	public const META_FRAMES_DESKTOP = '_shs_frames_desktop';
+	public const META_FRAMES_MOBILE  = '_shs_frames_mobile';
+
+	/** Upper bounds on the uploaded frame sets (keyframe-first model). */
+	public const MAX_FRAMES_DESKTOP_FREE = 24;
+	public const MAX_FRAMES_DESKTOP_PRO  = 36;
+	public const MAX_FRAMES_MOBILE       = 24;
+
 	public static function register(): void {
 		register_post_type(
 			self::POST_TYPE,
@@ -111,7 +120,15 @@ final class HeroSequence {
 	 * @return int[]
 	 */
 	public static function get_frame_attachment_ids( int $post_id ): array {
-		$frames = get_post_meta( $post_id, '_shs_frames_desktop', true );
+		$frames = get_post_meta( $post_id, self::META_FRAMES_DESKTOP, true );
+		return is_array( $frames ) ? array_map( 'intval', $frames ) : [];
+	}
+
+	/**
+	 * @return int[]
+	 */
+	public static function get_frame_attachment_ids_mobile( int $post_id ): array {
+		$frames = get_post_meta( $post_id, self::META_FRAMES_MOBILE, true );
 		return is_array( $frames ) ? array_map( 'intval', $frames ) : [];
 	}
 }
