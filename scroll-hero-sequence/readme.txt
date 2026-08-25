@@ -4,7 +4,7 @@ Tags: hero, scroll, animation, image sequence, scrollytelling
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.1.0
+Stable tag: 0.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,11 @@ Planned for Pro (Sprint 4) with Bring Your Own API Key.
 Add a JSON file to `templates/presets/` following the `shahre-honar.json` schema.
 
 == Changelog ==
+
+= 0.2.0 =
+* Frame supply pipeline (issue #2): admin UI to upload, reorder (drag-and-drop), remove and clear ordered desktop/mobile frame sequences via the media library.
+* Frame sets validated server-side (image-only, de-duplicated, plan-capped) and persisted to _shs_frames_desktop / _shs_frames_mobile.
+* Serializer now prefers uploaded frames as the source of truth: lock zone only fills gaps, poster uses the first real frame, and total_frames covers every supplied frame.
 
 = 0.1.0 =
 * Initial release: CPT, template system, Shahre Honar preset, block, preview, lock zone architecture.
