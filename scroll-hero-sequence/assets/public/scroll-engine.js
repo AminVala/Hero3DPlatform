@@ -95,6 +95,118 @@
 		} );
 	}
 
+	/**
+	 * Collect content animations from the config's scenes and resolve their
+	 * target elements inside this hero root. Scrollsequence-parity: animations
+	 * are frame-based, with a start/end active window plus "from" tweens
+	 * anchored to the start frame and "to" tweens anchored to the end frame.
+	 *
+	 * @param {Object}      cfg  Parsed config.
+	 * @param {HTMLElement} root Hero root element (animation scope).
+	 * @return {Array} List of { els, start, end, from, to } records.
+	 */
+	function gatherContentAnimations( cfg, root ) {
+		var scenes = ( cfg && cfg.scenes ) || [];
+		var out = [];
+		for ( var s = 0; s < scenes.length; s++ ) {
+			var anims = scenes[ s ].content_animations || [];
+			for ( var a = 0; a < anims.length; a++ ) {
+				var anim = anims[ a ];
+				if ( ! anim || ! anim.selector ) {
+					continue;
+				}
+				var els;
+				try {
+					els = root.querySelectorAll( anim.selector );
+				} catch ( e ) {
+					continue;
+				}
+				if ( ! els.length ) {
+					continue;
+				}
+				out.push( {
+					els: els,
+					start: parseInt( anim.start, 10 ) || 0,
+					end: parseInt( anim.end, 10 ) || 0,
+					from: anim.from || [],
+					to: anim.to || []
+				} );
+			}
+		}
+		return out;
+	}
+
+	function clamp01( v ) {
+		return Math.min( 1, Math.max( 0, v ) );
+	}
+
+	/**
+	 * Build a CSS transform/opacity state for one tween at a given 0..1 phase.
+	 * phase 0 = tween's anchored extreme, phase 1 = neutral (identity).
+	 */
+	function applyTween( state, tween, phase ) {
+		var type = tween.type;
+		var value = parseFloat( tween.value ) || 0;
+		if ( type === 'fade' ) {
+			// value = starting opacity; interpolate toward 1 as phase -> 1.
+			state.opacity = value + ( 1 - value ) * phase;
+		} else if ( type === 'move_vertical' ) {
+			state.ty += value * ( 1 - phase );
+		} else if ( type === 'move_horizontal' ) {
+			state.tx += value * ( 1 - phase );
+		} else if ( type === 'scale' ) {
+			state.scale = value + ( 1 - value ) * phase;
+		}
+	}
+
+	/**
+	 * Update all content-animation targets for the current frame.
+	 */
+	function updateContentAnimations( list, frame ) {
+		for ( var i = 0; i < list.length; i++ ) {
+			var rec = list[ i ];
+			var active = frame >= rec.start && frame <= rec.end;
+			var state = { opacity: 1, tx: 0, ty: 0, scale: 1 };
+
+			if ( ! active ) {
+				// Outside the window the element is hidden (Scrollsequence).
+				state.opacity = 0;
+			} else {
+				var j;
+				for ( j = 0; j < rec.from.length; j++ ) {
+					var fdur = parseInt( rec.from[ j ].duration, 10 ) || 0;
+					var fphase = fdur > 0 ? clamp01( ( frame - rec.start ) / fdur ) : 1;
+					applyTween( state, rec.from[ j ], fphase );
+				}
+				for ( j = 0; j < rec.to.length; j++ ) {
+					var tdur = parseInt( rec.to[ j ].duration, 10 ) || 0;
+					var tphase = tdur > 0 ? clamp01( ( rec.end - frame ) / tdur ) : 1;
+					applyTween( state, rec.to[ j ], tphase );
+				}
+			}
+
+			var transform =
+				'translate(' + state.tx + '%,' + state.ty + '%) scale(' + state.scale + ')';
+			for ( var k = 0; k < rec.els.length; k++ ) {
+				var el = rec.els[ k ];
+				el.style.opacity = String( state.opacity );
+				el.style.transform = transform;
+				el.style.visibility = state.opacity <= 0.001 ? 'hidden' : 'visible';
+			}
+		}
+	}
+
+	function showAllContentAnimations( list ) {
+		for ( var i = 0; i < list.length; i++ ) {
+			var els = list[ i ].els;
+			for ( var k = 0; k < els.length; k++ ) {
+				els[ k ].style.opacity = '1';
+				els[ k ].style.transform = 'none';
+				els[ k ].style.visibility = 'visible';
+			}
+		}
+	}
+
 	function initHero( root ) {
 		var raw = root.getAttribute( 'data-config' );
 		if ( ! raw ) {
@@ -117,6 +229,7 @@
 		var overlayEls = overlayRoot.querySelectorAll( '.shs-overlay' );
 
 		var cfg = data.config || {};
+		var contentAnims = gatherContentAnimations( cfg, root );
 		var scrollCfg = cfg.scroll_config || {};
 		var masterUrl = data.master_url || data.poster_url || '';
 		var lockZone = data.lock_zone || { start_frame: 14, end_frame: 24 };
@@ -144,6 +257,7 @@
 			}
 			root.classList.add( 'shs-hero--static' );
 			showAllOverlays( overlayEls );
+			showAllContentAnimations( contentAnims );
 			return;
 		}
 
@@ -177,6 +291,7 @@
 					frameImg.src = url;
 				}
 				updateOverlays( overlayEls, frameNum );
+				updateContentAnimations( contentAnims, frameNum );
 			}
 		}
 
